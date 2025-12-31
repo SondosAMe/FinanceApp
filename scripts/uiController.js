@@ -37,19 +37,39 @@ function updateDashboard() {
     savingsEl.className = savings >= 0 ? 'metric-value savings positive' : 'metric-value savings negative';
 }
 
+// Generate months from December 2025 through December 2026
+function generatePresetMonths() {
+    const months = [];
+    // December 2025
+    months.push('2025-12');
+    // All months of 2026
+    for (let month = 1; month <= 12; month++) {
+        const monthStr = `2026-${String(month).padStart(2, '0')}`;
+        months.push(monthStr);
+    }
+    return months;
+}
+
 // Update month selector
 function updateMonthSelector() {
     const monthSelect = document.getElementById('monthSelect');
-    const months = getAvailableMonths();
+    const dataMonths = getAvailableMonths();
+    const presetMonths = generatePresetMonths();
     const currentMonth = getCurrentMonthValue();
     
+    // Combine preset months with data months, remove duplicates
+    const allMonths = new Set([...presetMonths, ...dataMonths]);
+    
     // Add current month if not in list
-    if (!months.includes(getCurrentMonth())) {
-        months.unshift(getCurrentMonth());
+    if (!allMonths.has(getCurrentMonth())) {
+        allMonths.add(getCurrentMonth());
     }
     
+    // Convert to array and sort (newest first)
+    const sortedMonths = Array.from(allMonths).sort().reverse();
+    
     monthSelect.innerHTML = '';
-    months.forEach(month => {
+    sortedMonths.forEach(month => {
         const option = document.createElement('option');
         option.value = month;
         option.textContent = formatMonth(month);
