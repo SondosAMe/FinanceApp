@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Budget Tracker">
+    <meta name="description" content="Track your income, expenses, budgets, and financial goals">
+    <meta name="theme-color" content="#2563eb">
+    <title>Financial Budget Tracker</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Financial Budget Tracker</h1>
+            <div class="month-selector">
+                <label for="monthSelect">View Month:</label>
+                <select id="monthSelect"></select>
+            </div>
+        </header>
+
+        <section class="dashboard">
+            <div class="dashboard-grid">
+                <div class="metric-card">
+                    <h3>Monthly Income</h3>
+                    <p class="metric-value" id="incomeDisplay">$0</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Total Spending</h3>
+                    <p class="metric-value" id="spendingDisplay">$0</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Fixed Costs</h3>
+                    <p class="metric-value" id="fixedCostsDisplay">$0</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Savings</h3>
+                    <p class="metric-value savings" id="savingsDisplay">$0</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="income-section">
+            <h2>Monthly Income</h2>
+            <form id="incomeForm">
+                <div class="form-group">
+                    <label for="incomeSource">Income Source:</label>
+                    <input type="text" id="incomeSource" placeholder="e.g., Salary, Freelance" required>
+                </div>
+                <div class="form-group">
+                    <label for="incomeAmount">Income Amount:</label>
+                    <input type="number" id="incomeAmount" step="0.01" min="0" required>
+                </div>
+                <button type="submit">Add Income</button>
+            </form>
+            <div class="income-list" id="incomeList">
+                <!-- Income entries will be rendered here -->
+            </div>
+        </section>
+
+        <section class="transaction-section">
+            <h2>Add Transaction</h2>
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label for="transactionAmount">Amount:</label>
+                    <input type="number" id="transactionAmount" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="transactionDate">Date:</label>
+                    <input type="date" id="transactionDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="transactionCategory">Category:</label>
+                    <select id="transactionCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Food">Food</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transactionDescription">Description:</label>
+                    <input type="text" id="transactionDescription" placeholder="Optional description">
+                </div>
+                <button type="submit">Add Transaction</button>
+            </form>
+        </section>
+
+        <section class="fixed-costs-section">
+            <h2>Fixed Costs</h2>
+            <p class="section-description">Quick add fixed costs (click to add, edit icon to modify amount, trash icon to delete):</p>
+            <form id="fixedCostTemplateForm" class="fixed-cost-form">
+                <div class="form-group-inline">
+                    <div class="form-group">
+                        <label for="templateName">Template Name:</label>
+                        <input type="text" id="templateName" placeholder="e.g., Rent, Insurance" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="templateAmount">Amount:</label>
+                        <input type="number" id="templateAmount" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <button type="submit" class="btn-add-template">Add Template</button>
+                </div>
+            </form>
+            <div class="fixed-costs-grid" id="fixedCostsGrid">
+                <!-- Fixed cost template buttons will be generated here -->
+            </div>
+        </section>
+
+        <section class="budget-section">
+            <h2>Budget Limits</h2>
+            <p class="section-description">Set monthly budget limits for spending categories:</p>
+            <div class="budget-inputs" id="budgetInputs">
+                <div class="budget-item">
+                    <label for="budgetShopping">Shopping:</label>
+                    <input type="number" id="budgetShopping" step="0.01" min="0" placeholder="0.00">
+                    <button type="button" class="btn-save-budget" data-category="Shopping">Save</button>
+                </div>
+                <div class="budget-item">
+                    <label for="budgetFood">Food:</label>
+                    <input type="number" id="budgetFood" step="0.01" min="0" placeholder="0.00">
+                    <button type="button" class="btn-save-budget" data-category="Food">Save</button>
+                </div>
+                <div class="budget-item">
+                    <label for="budgetOther">Other:</label>
+                    <input type="number" id="budgetOther" step="0.01" min="0" placeholder="0.00">
+                    <button type="button" class="btn-save-budget" data-category="Other">Save</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="goals-section">
+            <h2>Goals</h2>
+            <form id="goalForm">
+                <div class="form-group">
+                    <label for="goalName">Goal Name:</label>
+                    <input type="text" id="goalName" placeholder="e.g., iPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="goalTarget">Target Amount:</label>
+                    <input type="number" id="goalTarget" step="0.01" min="0" required>
+                </div>
+                <button type="submit">Add Goal</button>
+            </form>
+            <div class="goals-list" id="goalsList">
+                <!-- Goals will be rendered here -->
+            </div>
+        </section>
+
+        <section class="calendar-section">
+            <h2>Monthly Calendar</h2>
+            <p class="section-description">Daily spending visualization (darker = more spending):</p>
+            <div class="calendar-container" id="calendarContainer">
+                <!-- Calendar will be rendered here -->
+            </div>
+        </section>
+
+        <section class="charts-section">
+            <h2>Visualizations</h2>
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>Spending Breakdown</h3>
+                    <canvas id="pieChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Budget vs Spending</h3>
+                    <canvas id="barChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Savings Trend</h3>
+                    <canvas id="lineChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Progress</h3>
+                    <div id="progressBars">
+                        <!-- Progress bars will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="transactions-section">
+            <h2>Transaction History</h2>
+            <div class="transactions-list" id="transactionsList">
+                <!-- Transactions will be rendered here -->
+            </div>
+        </section>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <!-- Day Breakdown Modal -->
+    <div id="dayBreakdownModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalDateTitle">Transactions for Date</h2>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="dayTransactionsList">
+                    <!-- Transactions for selected day will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/dataManager.js"></script>
+    <script src="scripts/transactionManager.js"></script>
+    <script src="scripts/budgetCalculator.js"></script>
+    <script src="scripts/chartRenderer.js"></script>
+    <script src="scripts/uiController.js"></script>
+    <script src="scripts/app.js"></script>
+</body>
+</html>
+
